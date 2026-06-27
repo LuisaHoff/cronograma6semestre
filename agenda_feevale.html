@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aulas — Feevale 2026/2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF7F4; --ink: #1C1917; --soft: #6B6560; --border: #E5DDD6;
+    --c0-dark:#4A235A;--c0-mid:#7D3C98;--c0-light:#F5EEF8;--c0-acc:#C9A8E0;
+    --c1-dark:#1B4F72;--c1-mid:#2E86C1;--c1-light:#EBF5FB;--c1-acc:#85C1E9;
+    --c2-dark:#1E4D2B;--c2-mid:#27AE60;--c2-light:#EAFAF1;--c2-acc:#82E0AA;
+    --c3-dark:#7B241C;--c3-mid:#C0392B;--c3-light:#FDEDEC;--c3-acc:#F1948A;
+    --c4-dark:#5D4037;--c4-mid:#8D6E63;--c4-light:#EFEBE9;--c4-acc:#BCAAA4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--cream);color:var(--ink);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;}
+
+  header{text-align:center;padding:48px 24px 36px;border-bottom:1px solid var(--border);}
+  header::before,header::after{content:'✦  ·  ·  ·  ✦  ·  ·  ·  ✦  ·  ·  ·  ✦  ·  ·  ·  ✦';display:block;font-size:11px;letter-spacing:4px;color:var(--c0-acc);}
+  header::before{margin-bottom:20px;}
+  header::after{margin-top:20px;}
+  header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,6vw,50px);font-weight:600;letter-spacing:-0.5px;}
+  header p{font-size:13px;color:var(--soft);margin-top:6px;letter-spacing:1px;text-transform:uppercase;}
+
+  .hoje-banner{background:var(--ink);color:var(--cream);padding:18px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  .hoje-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:.5;margin-bottom:4px;}
+  .hoje-data{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;}
+  .hoje-aulas{display:flex;flex-wrap:wrap;gap:8px;}
+  .hoje-pill{padding:5px 13px;border-radius:20px;font-size:13px;font-weight:500;color:white;}
+  .sem-aula{font-size:14px;opacity:.5;font-style:italic;}
+
+  /* TABS */
+  .tabs{display:flex;gap:0;border-bottom:2px solid var(--border);background:white;padding:0 24px;max-width:900px;margin:0 auto;}
+  .tab{padding:14px 20px;font-size:13px;font-weight:500;cursor:pointer;color:var(--soft);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;}
+  .tab.active{color:var(--ink);border-bottom-color:var(--ink);}
+  .tab:hover{color:var(--ink);}
+
+  main{max-width:900px;margin:0 auto;padding:32px 24px 80px;}
+
+  /* VISTA CRONOLÓGICA */
+  .mes-grupo{margin-bottom:40px;}
+  .mes-titulo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--ink);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+
+  .aula-item{display:flex;align-items:center;gap:16px;padding:12px 16px;border-radius:12px;margin-bottom:8px;transition:background .15s;}
+  .aula-item:hover{background:rgba(0,0,0,.03);}
+  .aula-item.hoje{outline:2px solid;}
+  .aula-item.passada{opacity:.4;}
+
+  .aula-data-bloco{text-align:center;width:48px;flex-shrink:0;}
+  .aula-dia-num{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;line-height:1;}
+  .aula-dia-sem{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--soft);margin-top:2px;}
+
+  .aula-cor{width:4px;height:44px;border-radius:4px;flex-shrink:0;}
+  .aula-info{flex:1;}
+  .aula-nome{font-size:14px;font-weight:500;}
+  .aula-hora-sala{font-size:12px;color:var(--soft);margin-top:3px;}
+  .aula-emoji{font-size:22px;flex-shrink:0;}
+  .hoje-badge{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:500;color:white;flex-shrink:0;}
+
+  /* COR POR MATÉRIA */
+  .cor0{background:var(--c0-mid);}
+  .cor1{background:var(--c1-mid);}
+  .cor2{background:var(--c2-mid);}
+  .cor3{background:var(--c3-mid);}
+  .cor4{background:var(--c4-mid);}
+  .hoje.m0{outline-color:var(--c0-mid);background:var(--c0-light);}
+  .hoje.m1{outline-color:var(--c1-mid);background:var(--c1-light);}
+  .hoje.m2{outline-color:var(--c2-mid);background:var(--c2-light);}
+  .hoje.m3{outline-color:var(--c3-mid);background:var(--c3-light);}
+  .hoje.m4{outline-color:var(--c4-mid);background:var(--c4-light);}
+  .badge0{background:var(--c0-mid);}
+  .badge1{background:var(--c1-mid);}
+  .badge2{background:var(--c2-mid);}
+  .badge3{background:var(--c3-mid);}
+  .badge4{background:var(--c4-mid);}
+  .pill0{background:var(--c0-mid);}
+  .pill1{background:var(--c1-mid);}
+  .pill2{background:var(--c2-mid);}
+  .pill3{background:var(--c3-mid);}
+  .pill4{background:var(--c4-mid);}
+
+  /* VISTA POR MATÉRIA */
+  .materia-card{border-radius:16px;overflow:hidden;margin-bottom:20px;border:1px solid var(--border);background:white;}
+  .card-header{padding:18px 22px;display:flex;align-items:center;gap:14px;cursor:pointer;}
+  .card-emoji{font-size:26px;flex-shrink:0;}
+  .card-titulo{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;}
+  .card-meta{font-size:12px;margin-top:3px;opacity:.65;}
+  .card-toggle{font-size:16px;transition:transform .25s;color:var(--soft);margin-left:auto;}
+  .card-toggle.open{transform:rotate(180deg);}
+  .sala-row{display:flex;align-items:center;gap:10px;padding:10px 22px;border-top:1px solid var(--border);background:var(--cream);}
+  .sala-row label{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--soft);flex-shrink:0;}
+  .sala-input{flex:1;border:1px solid var(--border);border-radius:8px;padding:6px 11px;font-family:'DM Sans',sans-serif;font-size:14px;background:white;outline:none;transition:border-color .2s;max-width:200px;}
+  .sala-input:focus{border-color:#aaa;}
+  .sala-btn{padding:6px 14px;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;color:white;transition:opacity .15s;}
+  .sala-btn:hover{opacity:.85;}
+  .salvo-msg{font-size:12px;color:var(--soft);opacity:0;transition:opacity .3s;}
+  .salvo-msg.show{opacity:1;}
+  .aulas-body{display:none;padding:0 22px 16px;}
+  .aulas-body.open{display:block;}
+  .lista-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--soft);padding:14px 0 8px;border-bottom:1px solid var(--border);margin-bottom:4px;}
+  .lista-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #F0EBE6;font-size:13px;}
+  .lista-row:last-child{border-bottom:none;}
+  .lista-data{width:90px;color:var(--soft);flex-shrink:0;}
+  .lista-diasem{width:65px;font-weight:500;flex-shrink:0;}
+  .lista-hora{color:var(--soft);}
+  .lista-hoje{margin-left:auto;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:500;color:white;flex-shrink:0;}
+  .lista-passada{opacity:.4;}
+
+  .m0 .card-header{background:var(--c0-light);}
+  .m0 .card-titulo{color:var(--c0-dark);}
+  .m0 .card-meta{color:var(--c0-mid);}
+  .m0 .sala-btn,.m0 .lista-hoje{background:var(--c0-mid);}
+  .m1 .card-header{background:var(--c1-light);}
+  .m1 .card-titulo{color:var(--c1-dark);}
+  .m1 .card-meta{color:var(--c1-mid);}
+  .m1 .sala-btn,.m1 .lista-hoje{background:var(--c1-mid);}
+  .m2 .card-header{background:var(--c2-light);}
+  .m2 .card-titulo{color:var(--c2-dark);}
+  .m2 .card-meta{color:var(--c2-mid);}
+  .m2 .sala-btn,.m2 .lista-hoje{background:var(--c2-mid);}
+  .m3 .card-header{background:var(--c3-light);}
+  .m3 .card-titulo{color:var(--c3-dark);}
+  .m3 .card-meta{color:var(--c3-mid);}
+  .m3 .sala-btn,.m3 .lista-hoje{background:var(--c3-mid);}
+  .m4 .card-header{background:var(--c4-light);}
+  .m4 .card-titulo{color:var(--c4-dark);}
+  .m4 .card-meta{color:var(--c4-mid);}
+  .m4 .sala-btn,.m4 .lista-hoje{background:var(--c4-mid);}
+
+  footer{text-align:center;padding:20px;font-size:12px;color:var(--soft);border-top:1px solid var(--border);}
+
+  @media(max-width:600px){
+    .hoje-banner{padding:14px 18px;}
+    main{padding:20px 14px 60px;}
+    .tabs{padding:0 14px;}
+    .tab{padding:12px 12px;font-size:12px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Aulas — Feevale 2026/2</h1>
+  <p>Luísa Hoff Martins · Administração</p>
+</header>
+
+<div class="hoje-banner">
+  <div>
+    <div class="hoje-label">Hoje</div>
+    <div class="hoje-data" id="hojeData"></div>
+  </div>
+  <div class="hoje-aulas" id="hojeAulas"></div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="trocarTab('cronologica',this)">📅 Por data</div>
+  <div class="tab" onclick="trocarTab('materias',this)">📚 Por matéria</div>
+</div>
+
+<main>
+  <div id="view-cronologica"></div>
+  <div id="view-materias" style="display:none"></div>
+</main>
+
+<footer>Câmpus II – Vila Nova · Feevale · 2026/2</footer>
+
+<script>
+const MATERIAS = [
+  {nome:"Processo Decisório e Resolução de Conflitos",emoji:"🧠",dia:"Segunda",horario:"19:30–22:15",
+   datas:["2026-08-03","2026-08-17","2026-08-31","2026-09-14","2026-09-28","2026-10-12","2026-10-26","2026-11-09","2026-11-23","2026-12-07"]},
+  {nome:"Mercado Financeiro e de Capitais",emoji:"📈",dia:"Quinta",horario:"19:30–22:15",
+   datas:["2026-08-06","2026-08-20","2026-09-03","2026-09-17","2026-10-01","2026-10-15","2026-10-29","2026-11-12","2026-11-26","2026-12-10"]},
+  {nome:"Gestão Socioambiental",emoji:"🌿",dia:"Quarta",horario:"19:30–22:15",
+   datas:["2026-07-29","2026-08-12","2026-08-26","2026-09-09","2026-09-23","2026-10-07","2026-10-21","2026-11-04","2026-11-18","2026-12-02"]},
+  {nome:"Empreendedorismo Social",emoji:"💡",dia:"Terça",horario:"19:30–22:15",
+   datas:["2026-08-04","2026-08-18","2026-09-01","2026-09-15","2026-09-29","2026-10-13","2026-10-27","2026-11-10","2026-11-24","2026-12-08"]},
+  {nome:"Desenvolvimento de Lideranças",emoji:"🌟",dia:"Segunda",horario:"19:30–22:15",
+   datas:["2026-07-27","2026-08-10","2026-08-24","2026-09-07","2026-09-21","2026-10-05","2026-10-19","2026-11-02","2026-11-16","2026-11-30"]}
+];
+
+const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+const MESES_PT = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+const DIAS = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+const DIAS_FULL = {0:"Domingo",1:"Segunda",2:"Terça",3:"Quarta",4:"Quinta",5:"Sexta",6:"Sábado"};
+
+function parseLocal(s){const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+function todayStr(){const t=new Date();return`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;}
+function getSala(i){return localStorage.getItem(`sala_${i}`)||'';}
+function setSala(i,v){localStorage.setItem(`sala_${i}`,v);}
+function getPredio(i){return localStorage.getItem(`predio_${i}`)||'';}
+function setPredio(i,v){localStorage.setItem(`predio_${i}`,v);}
+
+function renderHoje(){
+  const hoje=new Date(), hojeS=todayStr();
+  const meses=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  document.getElementById('hojeData').textContent=`${DIAS_FULL[hoje.getDay()]}, ${hoje.getDate()} de ${meses[hoje.getMonth()]}`;
+  const aulas=MATERIAS.map((m,i)=>m.datas.includes(hojeS)?{...m,idx:i}:null).filter(Boolean);
+  const el=document.getElementById('hojeAulas');
+  el.innerHTML=aulas.length===0
+    ?'<span class="sem-aula">Sem aulas hoje ✨</span>'
+    :aulas.map(a=>`<span class="hoje-pill pill${a.idx}">${a.emoji} ${a.nome.split(' ').slice(0,2).join(' ')}</span>`).join('');
+}
+
+function renderCronologica(){
+  const hojeS=todayStr();
+  // Montar lista ordenada
+  const todas=[];
+  MATERIAS.forEach((m,i)=>m.datas.forEach(d=>todas.push({data:d,idx:i,m})));
+  todas.sort((a,b)=>a.data.localeCompare(b.data));
+
+  // Agrupar por mês
+  const porMes={};
+  todas.forEach(a=>{
+    const [y,mo]=a.data.split('-');
+    const key=`${y}-${mo}`;
+    if(!porMes[key]) porMes[key]={label:`${MESES[parseInt(mo)-1]} ${y}`,aulas:[]};
+    porMes[key].aulas.push(a);
+  });
+
+  let html='';
+  Object.values(porMes).forEach(grupo=>{
+    html+=`<div class="mes-grupo"><div class="mes-titulo">${grupo.label}</div>`;
+    grupo.aulas.forEach(a=>{
+      const dt=parseLocal(a.data);
+      const isHoje=a.data===hojeS;
+      const passada=a.data<hojeS&&!isHoje;
+      const sala=getSala(a.idx);
+      const predio=getPredio(a.idx);
+      const localTexto=[sala?`Sala ${sala}`:'',predio?`Prédio ${predio}`:''].filter(Boolean).join(' · ');
+      html+=`<div class="aula-item${isHoje?' hoje':''} ${passada?' passada':''} m${a.idx}">
+        <div class="aula-data-bloco">
+          <div class="aula-dia-num">${dt.getDate()}</div>
+          <div class="aula-dia-sem">${DIAS[dt.getDay()]}</div>
+        </div>
+        <div class="aula-cor cor${a.idx}"></div>
+        <div class="aula-info">
+          <div class="aula-nome">${a.m.emoji} ${a.m.nome}</div>
+          <div class="aula-hora-sala">${a.m.horario}${localTexto?' · '+localTexto:''}</div>
+        </div>
+        ${isHoje?`<span class="hoje-badge badge${a.idx}">Hoje</span>`:''}
+      </div>`;
+    });
+    html+='</div>';
+  });
+  document.getElementById('view-cronologica').innerHTML=html;
+}
+
+function renderMaterias(){
+  const hojeS=todayStr();
+  let html='';
+  MATERIAS.forEach((m,idx)=>{
+    const sala=getSala(idx);
+    const predio=getPredio(idx);
+    const proxima=m.datas.find(d=>d>=hojeS)||null;
+    const metaTexto=proxima?`Próxima: ${formatData(proxima)} · ${m.dia}s`:`Encerrada · ${m.dia}s`;
+    const localMeta=[sala?`Sala ${sala}`:'',predio?`Prédio ${predio}`:''].filter(Boolean).join(' · ');
+    html+=`<div class="materia-card m${idx}">
+      <div class="card-header" onclick="toggleCard(${idx})">
+        <span class="card-emoji">${m.emoji}</span>
+        <div>
+          <div class="card-titulo">${m.nome}</div>
+          <div class="card-meta" id="cmeta-${idx}">${metaTexto} · ${m.horario}${localMeta?' · '+localMeta:''}</div>
+        </div>
+        <span class="card-toggle" id="ctog-${idx}">▾</span>
+      </div>
+      <div class="sala-row">
+        <label>Sala</label>
+        <input class="sala-input" id="sinput-${idx}" type="text" placeholder="ex: 210" value="${sala}"/>
+        <label style="margin-left:8px">Prédio</label>
+        <input class="sala-input" id="pinput-${idx}" type="text" placeholder="ex: A" value="${predio}"/>
+        <button class="sala-btn" onclick="salvarSala(${idx})">Salvar</button>
+        <span class="salvo-msg" id="smsg-${idx}">✓ Salvo</span>
+      </div>
+      <div class="aulas-body" id="sbody-${idx}">
+        <div class="lista-label">Calendário de aulas</div>
+        ${m.datas.map(d=>{
+          const dt=parseLocal(d);
+          const isHoje=d===hojeS;
+          const passada=d<hojeS&&!isHoje;
+          return`<div class="lista-row${passada?' lista-passada':''}">
+            <span class="lista-data">${formatData(d)}</span>
+            <span class="lista-diasem">${DIAS_FULL[dt.getDay()]}</span>
+            <span class="lista-hora">${m.horario}</span>
+            ${isHoje?`<span class="lista-hoje">Hoje</span>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  });
+  document.getElementById('view-materias').innerHTML=html;
+}
+
+function formatData(s){const d=parseLocal(s);return`${d.getDate()} ${MESES_PT[d.getMonth()]}`;}
+
+function toggleCard(idx){
+  document.getElementById(`sbody-${idx}`).classList.toggle('open');
+  document.getElementById(`ctog-${idx}`).classList.toggle('open');
+}
+
+function salvarSala(idx){
+  const sala=document.getElementById(`sinput-${idx}`).value.trim();
+  const predio=document.getElementById(`pinput-${idx}`).value.trim();
+  setSala(idx,sala);
+  setPredio(idx,predio);
+  const msg=document.getElementById(`smsg-${idx}`);
+  msg.classList.add('show');
+  setTimeout(()=>msg.classList.remove('show'),2000);
+  const m=MATERIAS[idx], hojeS=todayStr();
+  const proxima=m.datas.find(d=>d>=hojeS)||null;
+  const metaTexto=proxima?`Próxima: ${formatData(proxima)} · ${m.dia}s`:`Encerrada · ${m.dia}s`;
+  const localMeta=[sala?`Sala ${sala}`:'',predio?`Prédio ${predio}`:''].filter(Boolean).join(' · ');
+  const el=document.getElementById(`cmeta-${idx}`);
+  if(el) el.textContent=`${metaTexto} · ${m.horario}${localMeta?' · '+localMeta:''}`;
+  renderCronologica();
+}
+
+function trocarTab(vista, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('view-cronologica').style.display=vista==='cronologica'?'block':'none';
+  document.getElementById('view-materias').style.display=vista==='materias'?'block':'none';
+}
+
+renderHoje();
+renderCronologica();
+renderMaterias();
+</script>
+</body>
+</html>
